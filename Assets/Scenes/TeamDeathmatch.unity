@@ -1246,7 +1246,7 @@ GameObject:
   - component: {fileID: 328659962}
   m_Layer: 0
   m_Name: CameraMap
-  m_TagString: MainCamera
+  m_TagString: Cameras
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3889,7 +3889,7 @@ GameObject:
   - component: {fileID: 1136385241}
   m_Layer: 0
   m_Name: Camera1
-  m_TagString: MainCamera
+  m_TagString: Cameras
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3901,7 +3901,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1136385240}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1136385242
 Camera:
   m_ObjectHideFlags: 0
@@ -3981,7 +3981,7 @@ GameObject:
   - component: {fileID: 1168297552}
   m_Layer: 0
   m_Name: Camera2
-  m_TagString: MainCamera
+  m_TagString: Cameras
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4204,6 +4204,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1312352244, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 155.1001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1312352244, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -52.69995
+      objectReference: {fileID: 0}
+    - target: {fileID: 3414662637742749596, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 78.1001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3414662637742749596, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -121.400024
+      objectReference: {fileID: 0}
     - target: {fileID: 7443408887813606049, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4252,6 +4268,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7443408887813606060, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: _playerPrefab
+      value: 
+      objectReference: {fileID: 2125758751652951245, guid: 9a0ecc5db32efab4aaeca83db89379bb, type: 3}
     - target: {fileID: 7443408887813606060, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: Spawns.Array.size
       value: 3
@@ -4515,7 +4535,7 @@ GameObject:
   - component: {fileID: 1451616540}
   m_Layer: 0
   m_Name: Camera4
-  m_TagString: MainCamera
+  m_TagString: Cameras
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6282,7 +6302,7 @@ GameObject:
   - component: {fileID: 2084033875}
   m_Layer: 0
   m_Name: Camera3
-  m_TagString: MainCamera
+  m_TagString: Cameras
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
