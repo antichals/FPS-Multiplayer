@@ -26,30 +26,19 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if(base.IsOwner)
-        {
+        if (!base.IsOwner)
+            return;
 
-            if (!base.IsOwner)
-                return;
-
+        if (base.IsOwner)
+        {        
             characterController = GetComponent<CharacterController>();
 
-            
-            
-            // Set up camera
-            
-            //playerCamera = GetComponentInChildren<Camera>(true);
-            //playerCamera.gameObject.SetActive(true);
-
-            playerCamera = GetComponentInChildren<Camera>(true);
-            
+            // Init camera
+            playerCamera = GetComponentInChildren<Camera>(true);       
             playerCamera.enabled = true;
-
             if (playerCamera == null)
                 Debug.LogError("PlayerController: No Camera found in children!");
-
             playerCamera.GetComponent<AudioListener>().enabled = true;
-
 
             // Init weapons
             if (TryGetComponent(out PlayerWeaponManager playerWeapon))
@@ -63,22 +52,7 @@ public class PlayerController : NetworkBehaviour
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-
         }
-
-        
-        if (!base.IsOwner)
-        {
-            //if (playerCamera != null) playerCamera.enabled = false;
-            //playerCamera.TryGetComponent(out AudioListener al)) al.enabled = false;
-            //if (weaponRoot != null) weaponRoot.SetActive(false);
-            //enabled = false;
-            return;
-        }
-
-
-             
-        
     }
 
 
@@ -89,6 +63,7 @@ public class PlayerController : NetworkBehaviour
         HandleMovement();
         HandleLook();
     }
+
 
     void HandleMovement()
     {

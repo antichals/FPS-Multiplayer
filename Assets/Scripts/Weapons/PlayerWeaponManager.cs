@@ -7,8 +7,6 @@ public class PlayerWeaponManager : NetworkBehaviour
 {
     [SerializeField] private List<AWeapon> weapons = new List<AWeapon>();
     [SerializeField] private AWeapon currentWeapon;
-    private int currentIndex;
-
 
     public override void OnStartClient()
     {
@@ -22,41 +20,53 @@ public class PlayerWeaponManager : NetworkBehaviour
     }
 
 
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
             currentWeapon.Fire();
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("Weapon switched to PISTOL");
+            InitializeWeapon(0);
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            InitializeWeapon(1);
+            Debug.Log("Weapon switched to RIFLE");
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            InitializeWeapon(2);
+            Debug.Log("Weapon switched to SHOTGUN");
+        }
+
     }
 
-
-
-    // TODO the idea is to take the camera and set the weapons childs of it (to follow rotation)
+    // TODO quitar parentWeapons if not needed
     public void InitializeWeapons(Transform parentWeapons)
     {
-        /*
+        
         for(int i = 0; i< weapons.Count; i++)
         {
-            weapons[i].transform.SetParent(parentWeapons);
+            //weapons[i].transform.SetParent(parentWeapons);
             weapons[i].gameObject.SetActive(false);
         }
-        */
+        
 
-        if(weapons.Count > 0)
-        {
-            currentWeapon = weapons[0];
-            currentIndex = 0;
-        }
+        InitializeWeapon(0);
     }
 
     private void InitializeWeapon(int index)
     {
         // Deactive previous weapon
-        weapons[currentIndex].gameObject.SetActive(false);
+        currentWeapon.gameObject.SetActive(false);
 
         // Activate new weapon
         weapons[index].gameObject.SetActive(true);
-        currentIndex = index;
+        currentWeapon = weapons[index];
     }
 
 
