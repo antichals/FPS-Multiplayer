@@ -42,7 +42,6 @@ public class PlayerWeaponManager : NetworkBehaviour
             InitializeWeapon(2);
             Debug.Log("Weapon switched to SHOTGUN");
         }
-
     }
 
     // TODO quitar parentWeapons if not needed
