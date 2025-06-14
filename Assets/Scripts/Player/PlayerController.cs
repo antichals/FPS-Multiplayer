@@ -26,10 +26,10 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (!base.IsOwner)
+        if (!IsOwner)
             return;
 
-        if (base.IsOwner)
+        if (IsOwner)
         {        
             characterController = GetComponent<CharacterController>();
 
@@ -41,9 +41,9 @@ public class PlayerController : NetworkBehaviour
             playerCamera.GetComponent<AudioListener>().enabled = true;
 
             // Init weapons
-            if (TryGetComponent(out PlayerWeaponManager playerWeapon))
+            if (TryGetComponent(out PlayerWeapon playerWeapon))
             {
-                playerWeapon.InitializeWeapons(playerCamera.transform);
+                //playerWeapon.InitializeWeapons(playerCamera.transform);
             }
             else
             {
@@ -58,7 +58,7 @@ public class PlayerController : NetworkBehaviour
 
     void Update()
     {
-        if (!base.IsOwner) return; // Only local player processes input
+        if (!IsOwner) return; // Only local player processes input
 
         HandleMovement();
         HandleLook();

@@ -1,30 +1,38 @@
-using System.Collections;
 using System.Collections.Generic;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using UnityEngine;
 
-public class PlayerWeaponManager : NetworkBehaviour
+
+public class PlayerWeapon : NetworkBehaviour
 {
-    [SerializeField] private List<AWeapon> weapons = new List<AWeapon>();
-    [SerializeField] private AWeapon currentWeapon;
+    [SerializeField] private List<Weapon> weapons = new List<Weapon>();
+    [SerializeField] private Weapon currentWeapon;
+    private readonly SyncVar<int> _currentWeaponIndex = new (-1);
 
     public override void OnStartClient()
     {
         base.OnStartClient();
+        InitializeWeapons();
+        _currentWeaponIndex.OnChange += OnCurrentIndexChanged;
 
-        if(!base.IsOwner)
+
+
+        if(!IsOwner)
         {
-            enabled = false;
+                enabled = false;
             return;
         }
-    }
 
+        //currentWeapon = weapons[0];
+    }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
             currentWeapon.Fire();
 
+    /*  DEBUG WEAPONS
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             Debug.Log("Weapon switched to PISTOL");
@@ -42,10 +50,11 @@ public class PlayerWeaponManager : NetworkBehaviour
             InitializeWeapon(2);
             Debug.Log("Weapon switched to SHOTGUN");
         }
+    */
+    
     }
 
-    // TODO quitar parentWeapons if not needed
-    public void InitializeWeapons(Transform parentWeapons)
+    public void InitializeWeapons()
     {
         
         for(int i = 0; i< weapons.Count; i++)
@@ -54,20 +63,28 @@ public class PlayerWeaponManager : NetworkBehaviour
             weapons[i].gameObject.SetActive(false);
         }
         
-
-        InitializeWeapon(0);
+        ServerInitializeWeapon(0);
     }
 
-    private void InitializeWeapon(int index)
+   
+    [ServerRpc]
+    public void ServerInitializeWeapon(int index)
+    {
+        _currentWeaponIndex.Value = index;
+        Debug.Log("Seting current index to " + index);
+    }
+
+    private void OnCurrentIndexChanged(int oldIndex, int newIndex, bool asServer)
     {
         // Deactive previous weapon
-        currentWeapon.gameObject.SetActive(false);
+        if(currentWeapon != null)
+            currentWeapon.gameObject.SetActive(false);
 
         // Activate new weapon
-        weapons[index].gameObject.SetActive(true);
-        currentWeapon = weapons[index];
+        weapons[newIndex].gameObject.SetActive(true);
+        Debug.Log("Activating weapon in slot " + newIndex);
+        currentWeapon = weapons[newIndex];
     }
-
 
     private void FireWeapon()
     {
