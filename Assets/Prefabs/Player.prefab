@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7110398562963469093}
   - component: {fileID: 5826821396509722762}
   - component: {fileID: 4581049699530821410}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 6945948021384545267}
   - component: {fileID: 8328042838705492166}
   - component: {fileID: 4923144490371513654}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 1, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7972130068835349613}
@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 6530916505479438340}
   - component: {fileID: 8937734438454528220}
   - component: {fileID: 6196732512639953816}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -239,7 +239,7 @@ Transform:
   m_GameObject: {fileID: 2880255062664807232}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: 0.0027404518, w: 0.99999624}
-  m_LocalPosition: {x: -0.16, y: 0.319, z: -0.098}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -322,7 +322,9 @@ GameObject:
   - component: {fileID: 3020224488071630176}
   - component: {fileID: 5812031865555932751}
   - component: {fileID: 3745429405701856227}
-  m_Layer: 0
+  - component: {fileID: 7200438189042483308}
+  - component: {fileID: 8963713701119577975}
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -393,10 +395,11 @@ MonoBehaviour:
   jumpSpeed: 8
   gravity: 20
   lookSpeed: 2
-  lookXLimit: 45
+  lookXLimit: 90
   playerCamera: {fileID: 0}
   weaponRoot: {fileID: 0}
   canMove: 1
+  playerSelfLayer: 7
 --- !u!114 &2125758751652951245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,6 +421,11 @@ MonoBehaviour:
   NetworkBehaviours:
   - {fileID: 2957962512501441835}
   - {fileID: 3020224488071630176}
+  - {fileID: 5812031865555932751}
+  - {fileID: 3745429405701856227}
+  - {fileID: 5632962239193604676}
+  - {fileID: 3354433988574676293}
+  - {fileID: 6455870957820696298}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -442,7 +450,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 8
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 7807759643866311769
   <SceneId>k__BackingField: 0
@@ -506,9 +514,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66f58ff09826b2949908bce599bb5649, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 2125758751652951245}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2125758751652951245}
   weapons:
   - {fileID: 5632962239193604676}
   - {fileID: 3354433988574676293}
@@ -526,9 +534,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 451a51ed0b859b447a42a5b559603e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 2125758751652951245}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2125758751652951245}
   pickupRange: 4
   pickupKey: 101
   pickupLayers:
@@ -536,6 +544,45 @@ MonoBehaviour:
     m_Bits: 64
   _cameraTransform: {fileID: 6530916505479438340}
   _playerWeapon: {fileID: 5812031865555932751}
+--- !u!114 &7200438189042483308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115180599190704178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0457fae445cd0da4ea6fc1b8b649d6d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2125758751652951245}
+  _networkObjectCache: {fileID: 0}
+  maxHealth: 100
+--- !u!136 &8963713701119577975
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115180599190704178}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.37
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2395173602295573095
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -544,25 +591,53 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6530916505479438340}
     m_Modifications:
+    - target: {fileID: 1362374548099114, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1620780442430432, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642252848606250, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1694449805434718, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
       propertyPath: m_Name
       value: Pistol_M1911
       objectReference: {fileID: 0}
     - target: {fileID: 1694449805434718, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1694449805434718, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1748277932983872, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1765096765920448, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1929811568968954, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4952727429218122, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.391
+      value: 0.338
       objectReference: {fileID: 0}
     - target: {fileID: 4952727429218122, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.181
+      value: -0.18
       objectReference: {fileID: 0}
     - target: {fileID: 4952727429218122, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.799
+      value: 0.47
       objectReference: {fileID: 0}
     - target: {fileID: 4952727429218122, guid: 6f1a7354265853f44b0ed5e2e43676ad, type: 3}
       propertyPath: m_LocalRotation.w
@@ -622,9 +697,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f631762c5dc48a4c96fe4c3a0222014, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 2125758751652951245}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2125758751652951245}
+  damage: 7
+  maxRange: 20
+  weaponHitLayer:
+    serializedVersion: 2
+    m_Bits: 321
 --- !u!1001 &5586956408057046853
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -633,25 +713,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6530916505479438340}
     m_Modifications:
+    - target: {fileID: 1324608018887474, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1452442627303592, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1487774384131766, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
       propertyPath: m_Name
       value: Rifle_AK74
       objectReference: {fileID: 0}
     - target: {fileID: 1487774384131766, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1487774384131766, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1927369336514790, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4519716788627816, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.391
+      value: 0.338
       objectReference: {fileID: 0}
     - target: {fileID: 4519716788627816, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.181
+      value: -0.18
       objectReference: {fileID: 0}
     - target: {fileID: 4519716788627816, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.799
+      value: 0.47
       objectReference: {fileID: 0}
     - target: {fileID: 4519716788627816, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -706,9 +802,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb6ef6d44df3e9249884021383dc268a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 2125758751652951245}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2125758751652951245}
+  damage: 10
+  maxRange: 20
+  weaponHitLayer:
+    serializedVersion: 2
+    m_Bits: 321
 --- !u!4 &5591454130267672109 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4519716788627816, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
@@ -727,20 +828,32 @@ PrefabInstance:
       value: Shotgun_Bennelli_M4
       objectReference: {fileID: 0}
     - target: {fileID: 1236257789494122, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1236257789494122, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1326079549577358, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1584542541181842, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4243371153570508, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.391
+      value: 0.338
       objectReference: {fileID: 0}
     - target: {fileID: 4243371153570508, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.181
+      value: -0.18
       objectReference: {fileID: 0}
     - target: {fileID: 4243371153570508, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.799
+      value: 0.47
       objectReference: {fileID: 0}
     - target: {fileID: 4243371153570508, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}
       propertyPath: m_LocalRotation.w
@@ -795,9 +908,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64620ec5d10c3b04da74e0e01d012240, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 2125758751652951245}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2125758751652951245}
+  damage: 15
+  maxRange: 20
+  weaponHitLayer:
+    serializedVersion: 2
+    m_Bits: 321
 --- !u!4 &8606096491756926993 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243371153570508, guid: 8b0b86b42def11849a8eba21f4a6a684, type: 3}

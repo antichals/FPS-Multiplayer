@@ -1,0 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using FishNet.Object;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class PlayerHealth : NetworkBehaviour 
+{
+    [SerializeField] private int maxHealth = 100;
+    private int _currentHealth;
+
+    public void Awake()
+    {
+        _currentHealth = maxHealth;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        
+        if(!IsOwner)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        ServerTakeDamage(damage);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerTakeDamage(int damage)
+    {
+        _currentHealth -= damage;
+        Debug.Log("[PlayerHealth.ServerTakeDamage] Current health: " +  _currentHealth);
+
+        if (_currentHealth <= 0)
+            HandlePlayerDead();
+    }
+
+    private void HandlePlayerDead()
+    {
+        Debug.Log("[PlayerHealth.HandlePlayerDead] Player died");
+    }
+}

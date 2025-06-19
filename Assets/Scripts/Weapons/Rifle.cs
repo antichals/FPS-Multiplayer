@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Rifle : Weapon
 {
-    public override void  Fire()
+    public override void PlayWeaponAnimation()
     {
         Debug.Log("Rifle Fired");  
     }

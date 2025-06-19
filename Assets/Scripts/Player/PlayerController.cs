@@ -9,7 +9,7 @@ public class PlayerController : NetworkBehaviour
     public float jumpSpeed = 8.0f;
     public float gravity = 20.0f;
     public float lookSpeed = 2.0f;
-    public float lookXLimit = 45.0f;
+    public float lookXLimit = 90.0f;
 
     [Header("References")]
     public Camera playerCamera; // assign in prefab inspector
@@ -22,13 +22,19 @@ public class PlayerController : NetworkBehaviour
     [HideInInspector]
     public bool canMove = true;
 
+    [SerializeField] private int playerSelfLayer = 7;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
 
         if (!IsOwner)
+        {
+            enabled = false;
             return;
+        }
 
+        // TODO quitar este if
         if (IsOwner)
         {        
             characterController = GetComponent<CharacterController>();
@@ -40,14 +46,11 @@ public class PlayerController : NetworkBehaviour
                 Debug.LogError("PlayerController: No Camera found in children!");
             playerCamera.GetComponent<AudioListener>().enabled = true;
 
-            // Init weapons
-            if (TryGetComponent(out PlayerWeapon playerWeapon))
+            // Set up layers
+            gameObject.layer = playerSelfLayer;
+            foreach (Transform child in transform)
             {
-                //playerWeapon.InitializeWeapons(playerCamera.transform);
-            }
-            else
-            {
-                Debug.LogWarning("PlayerWeapon script not assined to player.");
+                child.gameObject.layer = playerSelfLayer;
             }
 
             Cursor.lockState = CursorLockMode.Locked;

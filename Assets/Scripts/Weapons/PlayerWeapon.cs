@@ -13,18 +13,17 @@ public class PlayerWeapon : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        InitializeWeapons();
         _currentWeaponIndex.OnChange += OnCurrentIndexChanged;
-
+        InitializeWeapons();
 
 
         if(!IsOwner)
         {
-                enabled = false;
+            enabled = false;
             return;
         }
 
-        //currentWeapon = weapons[0];
+        ServerInitializeWeapon(0);
     }
 
     private void Update()
@@ -32,41 +31,34 @@ public class PlayerWeapon : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
             currentWeapon.Fire();
 
-    /*  DEBUG WEAPONS
+      //DEBUG WEAPONS
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             Debug.Log("Weapon switched to PISTOL");
-            InitializeWeapon(0);
+            ServerInitializeWeapon(0);
         }
 
         if(Input.GetKeyDown(KeyCode.Alpha2))
         {
-            InitializeWeapon(1);
+            ServerInitializeWeapon(1);
             Debug.Log("Weapon switched to RIFLE");
         }
 
         if(Input.GetKeyDown(KeyCode.Alpha3))
         {
-            InitializeWeapon(2);
+            ServerInitializeWeapon(2);
             Debug.Log("Weapon switched to SHOTGUN");
         }
-    */
-    
     }
 
     public void InitializeWeapons()
-    {
-        
+    { 
         for(int i = 0; i< weapons.Count; i++)
         {
-            //weapons[i].transform.SetParent(parentWeapons);
             weapons[i].gameObject.SetActive(false);
-        }
-        
-        ServerInitializeWeapon(0);
+        }      
     }
-
-   
+  
     [ServerRpc]
     public void ServerInitializeWeapon(int index)
     {
