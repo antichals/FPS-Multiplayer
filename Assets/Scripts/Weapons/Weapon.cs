@@ -20,7 +20,6 @@ public abstract class Weapon : NetworkBehaviour
     protected NetworkAnimator _networkAnimator;
     [SerializeField] protected AnimatorOverrideController _overrideController;
 
-    private int _fireId = 1;
 
     protected virtual void Awake()
     {

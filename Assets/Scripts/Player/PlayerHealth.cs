@@ -38,13 +38,14 @@ public class PlayerHealth : NetworkBehaviour
         Debug.Log("[PlayerHealth.ServerTakeDamage] Current health: " +  _currentHealth);
 
         // Send new currentHealth to the local player
-        LocalTakeDamage(Owner, _currentHealth);
 
         if (_currentHealth <= 0)
         {
             _currentHealth = 0;
             HandlePlayerDead();
         }
+
+        LocalTakeDamage(Owner, _currentHealth);
     }
 
     [TargetRpc]
