@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FishNet.Connection;
 using FishNet.Object;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -36,8 +37,20 @@ public class PlayerHealth : NetworkBehaviour
         _currentHealth -= damage;
         Debug.Log("[PlayerHealth.ServerTakeDamage] Current health: " +  _currentHealth);
 
+        // Send new currentHealth to the local player
+        LocalTakeDamage(Owner, _currentHealth);
+
         if (_currentHealth <= 0)
+        {
+            _currentHealth = 0;
             HandlePlayerDead();
+        }
+    }
+
+    [TargetRpc]
+    private void LocalTakeDamage(NetworkConnection connection, int newHealth)
+    {
+        UIManager.SetHealthText(newHealth.ToString()); 
     }
 
     private void HandlePlayerDead()
