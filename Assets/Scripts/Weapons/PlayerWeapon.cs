@@ -73,6 +73,7 @@ public class PlayerWeapon : NetworkBehaviour
         Debug.Log("Seting current index to " + index);
     }
 
+    // Update index in local
     private void OnCurrentIndexChanged(int oldIndex, int newIndex, bool asServer)
     {
         // Deactive previous weapon

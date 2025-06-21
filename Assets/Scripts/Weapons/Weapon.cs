@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using FishNet.Component.Animating;
 using FishNet.Object;
-using JetBrains.Annotations;
 using UnityEngine;
 
 public abstract class Weapon : NetworkBehaviour
@@ -15,7 +12,10 @@ public abstract class Weapon : NetworkBehaviour
     public LayerMask weaponHitLayer;
     private Transform _cameraTransform;
 
-    public ParticleSystem muzzleFlash;
+    public ParticleSystem muzzleFlashParticles;
+    public ParticleSystem bloodParticles;
+    public ParticleSystem terrainHitParticles;
+
     protected Animator _animator;
     protected NetworkAnimator _networkAnimator;
     [SerializeField] protected AnimatorOverrideController _overrideController;
@@ -45,9 +45,8 @@ public abstract class Weapon : NetworkBehaviour
         _networkAnimator.ResetTrigger("Fire");
         _networkAnimator.SetTrigger("Fire");
 
-        // Play weapon fire effect
+        // Play weapon particle effect
         ServerPlayWeaponParticleEffects();
-
 
         // If weapon does NOT hit anything do nothing
         if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out RaycastHit hit, maxRange))
@@ -60,16 +59,26 @@ public abstract class Weapon : NetworkBehaviour
         if (hit.transform.TryGetComponent(out PlayerHealth health))
         {
             Debug.Log("[Weapon.Fire] Hit a player!");
+
+            // Play blood particle effect
+            Instantiate(bloodParticles, hit.point, Quaternion.LookRotation(hit.normal)).Play();
+
+            // Call local TakeDame (will call server -> local hit player)
             health.TakeDamage(damage);
         }
+        else
+        {
+            Debug.Log("Terrain Hit");
+            // terrain hit
+            Instantiate(terrainHitParticles, hit.point, Quaternion.LookRotation(hit.normal)).Play() ;
+        }
     }
-
 
     [ServerRpc]
     public virtual void ServerPlayWeaponParticleEffects() 
     {
-        // Play effect locally on server
-        muzzleFlash.Play();
+        // Play particle effect locally on server
+        muzzleFlashParticles.Play();
 
         // Play effect on clients
         ObserversPlayWeaponParticleEffects();
@@ -78,7 +87,8 @@ public abstract class Weapon : NetworkBehaviour
     [ObserversRpc]
     private void ObserversPlayWeaponParticleEffects()
     {
-        // Play muzzle flash
-        muzzleFlash.Play();
+        Debug.Log("Playing Muzzle Flash");
+        // Play particle effect in all clients
+        muzzleFlashParticles.Play();
     }
 }
