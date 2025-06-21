@@ -27,13 +27,15 @@ public abstract class Weapon : NetworkBehaviour
         _cameraTransform = transform.parent;
         _animator = GetComponent<Animator>();
         _networkAnimator = GetComponent<NetworkAnimator>();
+
+        // Change animation depending on weapon
         if( _overrideController != null )
             _animator.runtimeAnimatorController = _overrideController;
     }
 
     public void Fire()
     {
-
+        // Check firerate
         if (Time.time < _lastFireTime + fireRate)
             return;
 
@@ -41,14 +43,14 @@ public abstract class Weapon : NetworkBehaviour
         _lastFireTime = Time.time;
 
         // Play weapon animations
-        //_networkAnimator.ResetTrigger("Fire");
-
         _networkAnimator.ResetTrigger("Fire");
         _networkAnimator.SetTrigger("Fire");
 
         // Play weapon fire effect
-        ServerPlayWeaponAnimation();
+        ServerPlayWeaponParticleEffects();
 
+
+        // If weapon does NOT hit anything do nothing
         if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out RaycastHit hit, maxRange))
         {
             Debug.Log("[Weapon.Fire] Nothing Hit");
@@ -65,32 +67,19 @@ public abstract class Weapon : NetworkBehaviour
 
 
     [ServerRpc]
-    public virtual void ServerPlayWeaponAnimation() 
+    public virtual void ServerPlayWeaponParticleEffects() 
     {
-        // Play locally on server
+        // Play effect locally on server
         muzzleFlash.Play();
-        
 
-        //_networkAnimator.ResetTrigger("Fire");
-        //_networkAnimator.SetTrigger("Fire");
-
-        // Then notify observers to run it too
-        ObserversPlayAnimation();
+        // Play effect on clients
+        ObserversPlayWeaponParticleEffects();
     }
 
     [ObserversRpc]
-    private void ObserversPlayAnimation()
+    private void ObserversPlayWeaponParticleEffects()
     {
-        // Display muzzle flash
+        // Play muzzle flash
         muzzleFlash.Play();
-
-
-
-        //_animator.SetTrigger("Fire");
-
-        Debug.Log("Playing weapon animation");
-        // Play weapon animation
-        //_networkAnimator.ResetTrigger("Fire");
-        //_networkAnimator.SetTrigger("Fire");
     }
 }
