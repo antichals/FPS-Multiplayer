@@ -10,6 +10,13 @@ public class PlayerWeapon : NetworkBehaviour
     [SerializeField] private Weapon currentWeapon;
     private readonly SyncVar<int> _currentWeaponIndex = new (-1);
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        _currentWeaponIndex.OnChange += OnCurrentIndexChanged;
+        InitializeWeapons();
+    }
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -28,8 +35,8 @@ public class PlayerWeapon : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-            currentWeapon.Fire();
+        if (Input.GetKey(KeyCode.Mouse0))
+            FireWeapon();
 
       //DEBUG WEAPONS
         if (Input.GetKeyDown(KeyCode.Alpha1))
