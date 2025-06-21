@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FishNet.Component.Animating;
 using FishNet.Object;
 using UnityEngine;
@@ -15,11 +16,17 @@ public abstract class Weapon : NetworkBehaviour
     public ParticleSystem muzzleFlashParticles;
     public ParticleSystem bloodParticles;
     public ParticleSystem terrainHitParticles;
+    private Dictionary<HitEffectType, ParticleSystem> particlesMap;
 
     protected Animator _animator;
     protected NetworkAnimator _networkAnimator;
     [SerializeField] protected AnimatorOverrideController _overrideController;
 
+    public enum HitEffectType
+    {
+        Terrain, 
+        Blood
+    }
 
     protected virtual void Awake()
     {
@@ -30,6 +37,14 @@ public abstract class Weapon : NetworkBehaviour
         // Change animation depending on weapon
         if( _overrideController != null )
             _animator.runtimeAnimatorController = _overrideController;
+
+        // We need this in order to pass the information to client and server on what we are hitting
+        particlesMap = new Dictionary<HitEffectType, ParticleSystem>
+        { 
+            { HitEffectType.Terrain, terrainHitParticles },
+            { HitEffectType.Blood, bloodParticles }
+            // Add more as needed
+        };
     }
 
     public void Fire()
@@ -61,7 +76,7 @@ public abstract class Weapon : NetworkBehaviour
             Debug.Log("[Weapon.Fire] Hit a player!");
 
             // Play blood particle effect
-            Instantiate(bloodParticles, hit.point, Quaternion.LookRotation(hit.normal)).Play();
+            ServerPlayHitParticleEffect(HitEffectType.Blood, hit.point, hit.normal);
 
             // Call local TakeDame (will call server -> local hit player)
             health.TakeDamage(damage);
@@ -70,12 +85,30 @@ public abstract class Weapon : NetworkBehaviour
         {
             Debug.Log("Terrain Hit");
             // terrain hit
-            Instantiate(terrainHitParticles, hit.point, Quaternion.LookRotation(hit.normal)).Play() ;
+            ServerPlayHitParticleEffect(HitEffectType.Terrain, hit.point, hit.normal);
+            
         }
     }
 
     [ServerRpc]
-    public virtual void ServerPlayWeaponParticleEffects() 
+    private void ServerPlayHitParticleEffect(HitEffectType type, Vector3 point, Vector3 normal)
+    {
+        // Play effect on server
+        Instantiate(particlesMap[type], point, Quaternion.LookRotation(normal)).Play();
+        
+        // Send info to clients
+        ObserversPlayHitParticleEffect(type, point, normal);
+    }
+
+    [ObserversRpc]
+    private void ObserversPlayHitParticleEffect(HitEffectType type, Vector3 point, Vector3 normal)
+    {
+        // Play effect on clients
+        Instantiate(particlesMap[type], point, Quaternion.LookRotation(normal)).Play();
+    }
+
+    [ServerRpc]
+    private void ServerPlayWeaponParticleEffects() 
     {
         // Play particle effect locally on server
         muzzleFlashParticles.Play();
