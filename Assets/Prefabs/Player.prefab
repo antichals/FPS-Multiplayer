@@ -398,6 +398,7 @@ MonoBehaviour:
   lookXLimit: 90
   playerCamera: {fileID: 0}
   weaponRoot: {fileID: 0}
+  characterController: {fileID: 0}
   canMove: 1
   playerSelfLayer: 7
 --- !u!114 &2125758751652951245
@@ -413,7 +414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <IsNested>k__BackingField: 0
-  WasActiveDuringEdit: 1
+  WasActiveDuringEdit: 0
   WasActiveDuringEdit_Set1: 1
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}

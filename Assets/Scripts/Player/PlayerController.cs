@@ -1,8 +1,11 @@
 using UnityEngine;
 using FishNet.Object;
+using System.Collections.Generic;
+using FishNet.Demo.AdditiveScenes;
 
 public class PlayerController : NetworkBehaviour
 {
+  
     [Header("Movement Settings")]
     public float walkingSpeed = 7.5f;
     public float runningSpeed = 11.5f;
@@ -15,7 +18,7 @@ public class PlayerController : NetworkBehaviour
     public Camera playerCamera; // assign in prefab inspector
     public GameObject weaponRoot; // assign weapon root under camera
 
-    private CharacterController characterController;
+    public CharacterController characterController;
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0f;
 
@@ -24,9 +27,20 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] private int playerSelfLayer = 7;
 
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        // Register player
+        PlayerManager.Instance?.RegisterPlayer(OwnerId, this);
+    }
+
+
     public override void OnStartClient()
     {
         base.OnStartClient();
+            characterController = GetComponent<CharacterController>();
 
         if (!IsOwner)
         {
@@ -37,7 +51,6 @@ public class PlayerController : NetworkBehaviour
         // TODO quitar este if
         if (IsOwner)
         {        
-            characterController = GetComponent<CharacterController>();
 
             // Init camera
             playerCamera = GetComponentInChildren<Camera>(true);       
@@ -53,11 +66,11 @@ public class PlayerController : NetworkBehaviour
                 child.gameObject.layer = playerSelfLayer;
             }
 
+            // Set up cursor
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
     }
-
 
     void Update()
     {
@@ -70,6 +83,8 @@ public class PlayerController : NetworkBehaviour
 
     void HandleMovement()
     {
+        if (!canMove) return;
+
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
 
         Vector3 forward = transform.forward;
@@ -110,4 +125,80 @@ public class PlayerController : NetworkBehaviour
         float mouseX = Input.GetAxis("Mouse X") * lookSpeed;
         transform.Rotate(0f, mouseX, 0f);
     }
+
+    public void TogglePlayer(bool state)
+    {
+        /*
+        // DEBUG
+        Debug.Log("[PlayerController.TogglePlayer] Toogling player");
+
+
+        canMove = toogle;
+        if (TryGetComponent(out Renderer playerRenderer))
+        {
+            playerRenderer.enabled = toogle;
+        }
+
+        if (TryGetComponent(out Collider collider))
+        {
+            collider.enabled = toogle;
+        }
+
+        // characterController.enabled = toogle;
+
+        Renderer[] renders = GetComponentsInChildren<Renderer>();
+        foreach (var render in renders)
+        {
+            render.enabled = toogle;
+        }
+        */
+        Debug.Log("[PlayerController.TogglePlayer] Toggling player: " + state);
+
+        canMove = state;
+
+        // 1. Character controller
+        if (characterController != null)
+            characterController.enabled = state;
+
+        // 2. Disable all colliders
+        foreach (var col in GetComponentsInChildren<Collider>())
+            col.enabled = state;
+
+        // 3. Disable all renderers
+        foreach (var rend in GetComponentsInChildren<Renderer>())
+            rend.enabled = state;
+
+        // 4. Disable all gameplay scripts except networking
+        foreach (var mb in GetComponentsInChildren<MonoBehaviour>())
+        {
+            if (mb == null) continue;
+            if (mb == this) continue;
+            if (mb is NetworkBehaviour) continue;
+
+            mb.enabled = state;
+        }
+
+        // 7. Optional: Unlock cursor when disabled
+        if (!state && IsOwner)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    [ObserversRpc]
+    public void ObserversTogglePlayer(bool state)
+    {
+        TogglePlayer(state);
+    }
+
+
+    public override void OnStopServer()
+    {
+        base.OnStopClient();
+
+        PlayerManager.Instance?.UnregisterPlayer(OwnerId);
+    }
 }
+
+

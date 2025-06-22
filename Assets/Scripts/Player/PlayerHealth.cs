@@ -39,6 +39,7 @@ public class PlayerHealth : NetworkBehaviour
 
         // Send new currentHealth to the local player
 
+
         if (_currentHealth <= 0)
         {
             _currentHealth = 0;
@@ -56,6 +57,11 @@ public class PlayerHealth : NetworkBehaviour
 
     private void HandlePlayerDead()
     {
-        Debug.Log("[PlayerHealth.HandlePlayerDead] Player died");
+
+        if (!IsServerInitialized) return;
+        // DEBUG
+        Debug.Log("[PlayerHealth.HandlePlayerDead] Toogling player off");
+
+        PlayerManager.Instance?.DisablePlayer(GetComponent<NetworkObject>());
     }
 }

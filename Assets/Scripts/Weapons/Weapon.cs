@@ -45,6 +45,9 @@ public abstract class Weapon : NetworkBehaviour
             { HitEffectType.Blood, bloodParticles }
             // Add more as needed
         };
+
+        // TODO dynamic animation speed depending on fireRate
+        //_animator.speed = 1 / fireRate;
     }
 
     public void Fire()
@@ -120,7 +123,6 @@ public abstract class Weapon : NetworkBehaviour
     [ObserversRpc]
     private void ObserversPlayWeaponParticleEffects()
     {
-        Debug.Log("Playing Muzzle Flash");
         // Play particle effect in all clients
         muzzleFlashParticles.Play();
     }
