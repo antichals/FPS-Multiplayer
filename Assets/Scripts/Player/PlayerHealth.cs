@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using FishNet.Connection;
@@ -7,12 +8,14 @@ using UnityEngine;
 
 public class PlayerHealth : NetworkBehaviour 
 {
-    [SerializeField] private int maxHealth = 100;
+    [SerializeField] public int _maxHealth = 100;
     private int _currentHealth;
+
+    public event Action<int> OnHealthChanged;  // Event for scripts to subscribe
 
     public void Awake()
     {
-        _currentHealth = maxHealth;
+        _currentHealth = _maxHealth;
     }
 
     public override void OnStartClient()
@@ -24,17 +27,22 @@ public class PlayerHealth : NetworkBehaviour
             enabled = false;
             return;
         }
+
+        UIManager._instance.SubscribeToHealthChange(this); // Pass PlayerHealth component reference to UIManager
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, int attackerID)
     {
-        ServerTakeDamage(damage);
+        ServerTakeDamage(damage, attackerID);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void ServerTakeDamage(int damage)
+    private void ServerTakeDamage(int damage, int attackerID)
     {
-        _currentHealth -= damage;
+        int newHealth = _currentHealth - damage;
+        _currentHealth = newHealth;
+
+        // DEBUG
         Debug.Log("[PlayerHealth.ServerTakeDamage] Current health: " +  _currentHealth);
 
         // Send new currentHealth to the local player
@@ -43,25 +51,43 @@ public class PlayerHealth : NetworkBehaviour
         if (_currentHealth <= 0)
         {
             _currentHealth = 0;
-            HandlePlayerDead();
+            HandlePlayerDead(attackerID);
         }
 
-        LocalTakeDamage(Owner, _currentHealth);
+        TargetChangeHealth(Owner, _currentHealth);
     }
 
     [TargetRpc]
-    private void LocalTakeDamage(NetworkConnection connection, int newHealth)
+    public void TargetChangeHealth(NetworkConnection connection, int newHealth)
     {
-        UIManager.SetHealthText(newHealth.ToString()); 
+        _currentHealth = newHealth;
+
+        // We only need to invoke in local
+        OnHealthChanged?.Invoke(_currentHealth);
     }
 
-    private void HandlePlayerDead()
+    [Server]
+    public void ServerUpdateHealth(int newHealth)
     {
+        // Change health in server
+        _currentHealth = _maxHealth;
 
-        if (!IsServerInitialized) return;
+        // Send to owning client only
+        TargetChangeHealth(Owner, _currentHealth);
+    }
+
+    private void HandlePlayerDead(int attackerID)
+    {
         // DEBUG
-        Debug.Log("[PlayerHealth.HandlePlayerDead] Toogling player off");
+        //Debug.Log("[PlayerHealth.HandlePlayerDead] Toogling player off");
 
-        PlayerManager.Instance?.DisablePlayer(GetComponent<NetworkObject>());
+        PlayerManager.Instance?.HandlePlayerDead(OwnerId, attackerID);
+        
+        //PlayerManager.Instance?.DisablePlayer(NetworkObject);
+    }
+
+    private void InvokeHealthChanged()
+    {
+        OnHealthChanged?.Invoke(_currentHealth);
     }
 }

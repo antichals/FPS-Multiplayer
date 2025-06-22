@@ -82,7 +82,7 @@ public abstract class Weapon : NetworkBehaviour
             ServerPlayHitParticleEffect(HitEffectType.Blood, hit.point, hit.normal);
 
             // Call local TakeDame (will call server -> local hit player)
-            health.TakeDamage(damage);
+            health.TakeDamage(damage, OwnerId);
         }
         else
         {

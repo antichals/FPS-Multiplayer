@@ -3,24 +3,31 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager _instances { get; private set; }
+    public static UIManager _instance { get; private set; }
     [SerializeField] private TextMeshProUGUI _healthText;
+
 
     private void Awake()
     {
         // Ensure only one instance exists
-        if (_instances != null && _instances != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        _instances = this;
-        DontDestroyOnLoad(gameObject); // Optional, if you want it across scenes
+        _instance = this;
+        //DontDestroyOnLoad(gameObject); // Optional, if you want it across scenes
     }
 
-    public static void SetHealthText(string health)
+    public void SubscribeToHealthChange(PlayerHealth playerHealth)
     {
-        _instances._healthText.text = health;
+        playerHealth.OnHealthChanged += UpdateHealth;
+    }
+
+
+    public void UpdateHealth(int currentHealth)
+    {
+        _instance._healthText.text = currentHealth.ToString();
     }
 }

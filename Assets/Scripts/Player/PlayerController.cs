@@ -32,15 +32,14 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
 
-        // Register player
-        PlayerManager.Instance?.RegisterPlayer(OwnerId, this);
+        // Register player in player manager
+        PlayerManager.Instance?.RegisterPlayer(OwnerId, NetworkObject);
     }
 
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-            characterController = GetComponent<CharacterController>();
 
         if (!IsOwner)
         {
@@ -51,6 +50,7 @@ public class PlayerController : NetworkBehaviour
         // TODO quitar este if
         if (IsOwner)
         {        
+            characterController = GetComponent<CharacterController>();
 
             // Init camera
             playerCamera = GetComponentInChildren<Camera>(true);       
@@ -128,30 +128,7 @@ public class PlayerController : NetworkBehaviour
 
     public void TogglePlayer(bool state)
     {
-        /*
-        // DEBUG
-        Debug.Log("[PlayerController.TogglePlayer] Toogling player");
 
-
-        canMove = toogle;
-        if (TryGetComponent(out Renderer playerRenderer))
-        {
-            playerRenderer.enabled = toogle;
-        }
-
-        if (TryGetComponent(out Collider collider))
-        {
-            collider.enabled = toogle;
-        }
-
-        // characterController.enabled = toogle;
-
-        Renderer[] renders = GetComponentsInChildren<Renderer>();
-        foreach (var render in renders)
-        {
-            render.enabled = toogle;
-        }
-        */
         Debug.Log("[PlayerController.TogglePlayer] Toggling player: " + state);
 
         canMove = state;
@@ -178,12 +155,10 @@ public class PlayerController : NetworkBehaviour
             mb.enabled = state;
         }
 
-        // 7. Optional: Unlock cursor when disabled
-        if (!state && IsOwner)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        // 5. Update cursor
+        Cursor.lockState = state ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = state;
+        
     }
 
     [ObserversRpc]
