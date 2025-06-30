@@ -683,6 +683,7 @@ GameObject:
   - component: {fileID: 219963743}
   - component: {fileID: 219963745}
   - component: {fileID: 219963744}
+  - component: {fileID: 219963746}
   m_Layer: 5
   m_Name: ScoreboardPanel
   m_TagString: Untagged
@@ -749,6 +750,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 219963742}
   m_CullTransparentMesh: 1
+--- !u!114 &219963746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219963742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4cbccc16b80ed34eaca43361f77425a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerEntryPrefab: {fileID: 4310723097217228711, guid: 08f81a7b819e6e546ba91565d65ba2f4, type: 3}
+  playerListParent: {fileID: 1440155992}
 --- !u!1001 &238963231
 PrefabInstance:
   m_ObjectHideFlags: 0
