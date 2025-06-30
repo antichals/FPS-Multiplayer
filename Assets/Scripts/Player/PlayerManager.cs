@@ -139,7 +139,9 @@ public class PlayerManager : NetworkBehaviour
         // DEBUG
         string attackerName = attackerData.netObject.name;
         string victimName = victimData.netObject.name;
-        Debug.Log($"[PlayerManager] {attackerName} killed {victimName}");
+        Debug.Log($"[PlayerManager] {attackerName} killed {victimName}.");
+        Debug.Log($"[PlayerManager] {attackerName} has {attackerData.kills} kills.");
+        Debug.Log($"[PlayerManager] {attackerName} has {attackerData.kills * 10} points!");
 
 
         NetworkObject netObj = GetPlayerData(victimID).netObject;
