@@ -1,7 +1,6 @@
-using UnityEngine;
+using FishNet.Connection;
 using FishNet.Object;
-using System.Collections.Generic;
-using FishNet.Demo.AdditiveScenes;
+using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -165,6 +164,28 @@ public class PlayerController : NetworkBehaviour
     public void ObserversTogglePlayer(bool state)
     {
         TogglePlayer(state);
+    }
+
+    public void SetPlayerPsition()
+    {
+
+    }
+
+    [ServerRpc]
+    private void ServerSetPlayerPosition()
+    {
+
+    }
+
+    // Called by the server
+    [TargetRpc]
+    public void TargetSetPlayerPosition(NetworkConnection netConnection, Vector3 newPosition, Quaternion rotation)
+    {
+        // The client sets its own position
+        transform.position = newPosition;
+        transform.rotation = rotation;
+
+        // Optional: reset velocity, re-enable movement, etc.
     }
 
 
