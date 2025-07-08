@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿
 using System.Collections.Generic;
 using FishNet.Connection;
 using FishNet.Object;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using static PlayerManager;
 
 public class PlayerManager : NetworkBehaviour
 {
@@ -87,11 +83,6 @@ public class PlayerManager : NetworkBehaviour
         }        
     }
 
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
         // If not server or list empty: return
@@ -125,7 +116,7 @@ public class PlayerManager : NetworkBehaviour
 
     public void UnregisterPlayer(int clientID)
     {
-        if (!_instance._players.ContainsKey(clientID))
+        if (_instance._players.ContainsKey(clientID))
         {
             _instance._players.Remove(clientID);
             ObserversRemoveScore(clientID);
@@ -280,6 +271,7 @@ public class PlayerManager : NetworkBehaviour
     [ObserversRpc]
     public void ObserversRemoveScore(int clientId)
     {
+        Debug.Log($"[PlayerManager.ObserversSendScore] Removing score update for player {clientId}");
         UIManager._instance?.RemoveScoreboardEntry(clientId);
     }
 

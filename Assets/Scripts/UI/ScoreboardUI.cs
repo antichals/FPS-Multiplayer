@@ -8,8 +8,8 @@ public class ScoreboardUI : MonoBehaviour
     [Header("References")]
     public GameObject playerEntryPrefab; 
     public Transform playerListParent;
+    public Dictionary<int, GameObject> playerEntries = new();
 
-    
 
 
 
@@ -20,16 +20,16 @@ public class ScoreboardUI : MonoBehaviour
 
         GameObject entry;
 
-        if (!UIManager._instance.playerEntries.ContainsKey(clientId))
+        if (!playerEntries.ContainsKey(clientId))
         {
             // No existe: instanciamos y lo guardamos
             entry = Instantiate(playerEntryPrefab, playerListParent);
-            UIManager._instance.playerEntries[clientId] = entry;
+            playerEntries[clientId] = entry;
         }
         else
         {
             // Ya existe: lo usamos
-            entry = UIManager._instance.playerEntries[clientId];
+            entry = playerEntries[clientId];
         }
 
         TextMeshProUGUI[] texts = entry.GetComponentsInChildren<TextMeshProUGUI>();
@@ -43,10 +43,13 @@ public class ScoreboardUI : MonoBehaviour
 
     public void RemovePlayerEntry(int clientId)
     {
-        if (UIManager._instance.playerEntries.TryGetValue(clientId, out GameObject entry))
+
+        Debug.Log("[ScoreboardUI.RemovePlayerEntry] method called");
+
+        if (playerEntries.TryGetValue(clientId, out GameObject entry))
         {
             Destroy(entry);
-            UIManager._instance.playerEntries.Remove(clientId);
+            playerEntries.Remove(clientId);
         }
     }
 }

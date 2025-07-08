@@ -52,6 +52,10 @@ public abstract class Weapon : NetworkBehaviour
 
     public void Fire()
     {
+        var playerController = GetComponentInParent<PlayerController>();
+        if (!playerController.canMove)
+            return;
+
         // Check firerate
         if (Time.time < _lastFireTime + fireRate)
             return;

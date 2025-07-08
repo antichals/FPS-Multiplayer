@@ -75,7 +75,18 @@ public class PlayerController : NetworkBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
-            //UIManager._instance.NewPlayerScoreboard(OwnerId);
+            GameObject networkCanvas = GameObject.FindGameObjectWithTag("NetworkHUD");
+            if (networkCanvas != null)
+            {
+                networkCanvas.SetActive(false);
+            }
+            /*
+            GameObject playerCanvas = GameObject.FindGameObjectWithTag("PlayerHUD");
+            if (playerCanvas != null)
+            {
+                playerCanvas.SetActive(true);
+            }
+            */
         }
 
         

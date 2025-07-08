@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
     public static UIManager _instance { get; private set; }
     [SerializeField] private TextMeshProUGUI _healthText;
     [SerializeField] private ScoreboardUI _scoreboard;
-    public Dictionary<int, GameObject> playerEntries;
+    
 
     private void OnEnable()
     {
@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour
         }
 
         _instance = this;
-        _instance.playerEntries = new();
+
 
         if (_scoreboard != null)
             _scoreboard.gameObject.SetActive(false);
