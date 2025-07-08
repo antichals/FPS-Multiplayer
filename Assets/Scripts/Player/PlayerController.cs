@@ -1,5 +1,6 @@
 using FishNet.Connection;
 using FishNet.Object;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
@@ -21,18 +22,21 @@ public class PlayerController : NetworkBehaviour
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0f;
 
+    public bool firstAccessScoreboard = true;
+
     [HideInInspector]
     public bool canMove = true;
 
+
     [SerializeField] private int playerSelfLayer = 7;
 
-
+    // is called on the server when the object spawns
     public override void OnStartServer()
     {
         base.OnStartServer();
 
         // Register player in player manager
-        PlayerManager.Instance?.RegisterPlayer(OwnerId, NetworkObject);
+        PlayerManager._instance?.RegisterPlayer(OwnerId, NetworkObject);
     }
 
 
@@ -45,6 +49,8 @@ public class PlayerController : NetworkBehaviour
             enabled = false;
             return;
         }
+
+
 
         // TODO quitar este if
         if (IsOwner)
@@ -68,7 +74,12 @@ public class PlayerController : NetworkBehaviour
             // Set up cursor
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            //UIManager._instance.NewPlayerScoreboard(OwnerId);
         }
+
+        
+
     }
 
     void Update()
@@ -77,6 +88,22 @@ public class PlayerController : NetworkBehaviour
 
         HandleMovement();
         HandleLook();
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (firstAccessScoreboard)
+            {
+                PlayerManager._instance.SendAllScores();
+                firstAccessScoreboard = false;
+            }
+
+            UIManager._instance.ToggleScoreboard(true);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            UIManager._instance.ToggleScoreboard(false);
+        }
     }
 
 
@@ -193,7 +220,7 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStopClient();
 
-        PlayerManager.Instance?.UnregisterPlayer(OwnerId);
+        PlayerManager._instance?.UnregisterPlayer(OwnerId);
     }
 }
 

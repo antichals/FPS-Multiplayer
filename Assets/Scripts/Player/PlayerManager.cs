@@ -1,16 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using FishNet.Connection;
 using FishNet.Object;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager;
 using UnityEngine;
 using static PlayerManager;
 
 public class PlayerManager : NetworkBehaviour
 {
-    public static PlayerManager Instance { get; private set; }
+    public static PlayerManager _instance { get; private set; }
     private Dictionary<int, PlayerData> _players;   // map<int clientID, class PlayerData> to access all player info
     private List<int> _currentDeadPlayers;
+    
 
 
     // GameModeManager
@@ -19,36 +22,9 @@ public class PlayerManager : NetworkBehaviour
 
     // TODO Change to GameMode
     [SerializeField] private float respawnTime = 5;
-    private void Update()
-    {
-        // If not server or list empty: return
-        if (!IsServerInitialized || _currentDeadPlayers.Count == 0) return;
 
 
-        // Check for players to spawn 
-        for (int i = 0; i < _currentDeadPlayers.Count;)
-        {
-            int clientID = _currentDeadPlayers[i];
-            PlayerData playerData = _players[clientID];
-
-            if (Time.time >= playerData.lastDeathTime + respawnTime)
-            {
-                // Remove from death list
-                _currentDeadPlayers.RemoveAt(i); // Since we are removing at [0] we don’t need to increment i
-
-                HandlePlayerRespawn(clientID);
-
-
-                // TODO Spawn player at another spawn location
-                
-            }
-            else
-            {
-                // Because players are stored in death order, we can early exit.
-                break;
-            }
-        }
-    }
+ 
 
     public class PlayerData
     {
@@ -76,7 +52,7 @@ public class PlayerManager : NetworkBehaviour
     // TODO Change when separate server and client builds logic
     public override void OnStartClient()
     {
-        base.OnStopClient();
+        base.OnStartClient();
 
         if(!IsServerInitialized)
         {
@@ -87,33 +63,78 @@ public class PlayerManager : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(this);
             return;
         }
 
         // Init PlayerManager
-        Instance = this;
-        Instance._players = new Dictionary<int, PlayerData>();
-        Instance._currentDeadPlayers = new List<int>();
+        _instance = this;
+        _instance._players = new Dictionary<int, PlayerData>();
+        _instance._currentDeadPlayers = new List<int>();
     }
+
 
     public void RegisterPlayer(int newClientID, NetworkObject netObject)
     {
-        if (!Instance._players.ContainsKey(newClientID))
-            Instance._players.Add(newClientID, new PlayerData(newClientID, netObject));
+        // DEBUG
+
+        if (!_instance._players.ContainsKey(newClientID)) 
+        {
+            PlayerData newPlayerData = new PlayerData(newClientID, netObject);
+            _instance._players.Add(newClientID, newPlayerData);
+        }        
+    }
+
+    private void Start()
+    {
+        
+    }
+
+    private void Update()
+    {
+        // If not server or list empty: return
+        if (!IsServerInitialized || _currentDeadPlayers.Count == 0) return;
+
+
+        // Check for players to spawn 
+        for (int i = 0; i < _currentDeadPlayers.Count;)
+        {
+            int clientID = _currentDeadPlayers[i];
+            PlayerData playerData = _players[clientID];
+
+            if (Time.time >= playerData.lastDeathTime + respawnTime)
+            {
+                // Remove from death list
+                _currentDeadPlayers.RemoveAt(i); // Since we are removing at [0] we don’t need to increment i
+
+                HandlePlayerRespawn(clientID);
+
+
+                // TODO Spawn player at another spawn location
+
+            }
+            else
+            {
+                // Because players are stored in death order, we can early exit.
+                break;
+            }
+        }
     }
 
     public void UnregisterPlayer(int clientID)
     {
-        if (!Instance._players.ContainsKey(clientID))
-            Instance._players.Remove(clientID);
+        if (!_instance._players.ContainsKey(clientID))
+        {
+            _instance._players.Remove(clientID);
+            ObserversRemoveScore(clientID);
+        }
     }
 
     public PlayerData GetPlayerData(int ownerId)
     {
-        Instance._players.TryGetValue(ownerId, out PlayerData playerData);
+        _instance._players.TryGetValue(ownerId, out PlayerData playerData);
         return playerData;
     }
 
@@ -122,6 +143,7 @@ public class PlayerManager : NetworkBehaviour
         // DEBUG
         Debug.Log("[PlayerManager.HandlePlayerDead] Method called");
 
+        
         // Get Data from both playes
         PlayerData attackerData = GetPlayerData(attackerID);
         PlayerData victimData = GetPlayerData(victimID);
@@ -135,6 +157,10 @@ public class PlayerManager : NetworkBehaviour
         // Handle victim object and components
         NetworkObject netObject = GetPlayerData(victimID).netObject;
         DisablePlayer(netObject);
+
+        // Send score update to all clients
+        ObserversSendScore(attackerID, attackerData.netObject.name, attackerData.kills, attackerData.deaths);
+        ObserversSendScore(victimID, victimData.netObject.name, victimData.kills, victimData.deaths);
 
         // DEBUG
         string attackerName = attackerData.netObject.name;
@@ -155,7 +181,7 @@ public class PlayerManager : NetworkBehaviour
         else
         {
             // Else get a random spawn point
-            spawnLocation = spawnPoints[Random.Range(0, spawnPoints.Count)]; // choose random point in list
+            spawnLocation = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)]; // choose random point in list
         }
 
         // Give new location 
@@ -172,9 +198,6 @@ public class PlayerManager : NetworkBehaviour
         // Handle Player health
         PlayerHealth playerHealth = netObj.GetComponent<PlayerHealth>();
         playerHealth.ServerUpdateHealth(playerHealth._maxHealth);
-
-
-
     }
 
     public void DisablePlayer(NetworkObject netObj)
@@ -239,11 +262,41 @@ public class PlayerManager : NetworkBehaviour
         playerController.TargetSetPlayerPosition(netConnection, newLocation.position, newLocation.rotation);
     }
 
-    private IEnumerator EnablePlayerNextFrame(NetworkObject netObj)
+    public void SubscribeToPlayerDead(PlayerHealth playerHealth)
     {
-        yield return new WaitForSeconds(4f);
-        
+        playerHealth.OnPlayerDead += HandlePlayerDead;
     }
+
+    [ObserversRpc]
+    public void  ObserversSendScore(int clientID, string nickname, int kills, int deaths)
+    {
+        // DEBUG
+        Debug.Log($"[PlayerManager.ObserversSendScore] Sending score update for player {nickname}");
+
+
+        UIManager._instance?.UpdateScoreboard(clientID, nickname, kills, deaths);
+    }
+
+    [ObserversRpc]
+    public void ObserversRemoveScore(int clientId)
+    {
+        UIManager._instance?.RemoveScoreboardEntry(clientId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SendAllScores()
+    {
+        foreach (var kvp in _players)
+        {
+            ObserversSendScore(kvp.Key, kvp.Value.netObject.name, kvp.Value.kills, kvp.Value.deaths);
+        }
+    }
+
+
+
+
+
+
 
 
 

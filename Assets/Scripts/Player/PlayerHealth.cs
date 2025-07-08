@@ -11,7 +11,9 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] public int _maxHealth = 100;
     private int _currentHealth;
 
-    public event Action<int> OnHealthChanged;  // Event for scripts to subscribe
+    // Event for scripts to subscribe
+    public event Action<int> OnHealthChanged;  
+    public event Action<int, int> OnPlayerDead; 
 
     public void Awake()
     {
@@ -28,7 +30,16 @@ public class PlayerHealth : NetworkBehaviour
             return;
         }
 
+
+        // TODO Crear un event manager o algo
         UIManager._instance.SubscribeToHealthChange(this); // Pass PlayerHealth component reference to UIManager
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        PlayerManager._instance?.SubscribeToPlayerDead(this);
     }
 
     public void TakeDamage(int damage, int attackerID)
@@ -51,7 +62,7 @@ public class PlayerHealth : NetworkBehaviour
         if (_currentHealth <= 0)
         {
             _currentHealth = 0;
-            HandlePlayerDead(attackerID);
+            InvokePlayerDead(attackerID);
         }
 
         TargetChangeHealth(Owner, _currentHealth);
@@ -63,7 +74,7 @@ public class PlayerHealth : NetworkBehaviour
         _currentHealth = newHealth;
 
         // We only need to invoke in local
-        OnHealthChanged?.Invoke(_currentHealth);
+        InvokeHealthChanged();
     }
 
     [Server]
@@ -76,14 +87,11 @@ public class PlayerHealth : NetworkBehaviour
         TargetChangeHealth(Owner, _currentHealth);
     }
 
-    private void HandlePlayerDead(int attackerID)
+    private void InvokePlayerDead(int attackerID)
     {
-        // DEBUG
-        //Debug.Log("[PlayerHealth.HandlePlayerDead] Toogling player off");
 
-        PlayerManager.Instance?.HandlePlayerDead(OwnerId, attackerID);
-        
-        //PlayerManager.Instance?.DisablePlayer(NetworkObject);
+        OnPlayerDead?.Invoke(OwnerId, attackerID); // Call event
+        //PlayerManager._instance?.HandlePlayerDead(OwnerId, attackerID);
     }
 
     private void InvokeHealthChanged()

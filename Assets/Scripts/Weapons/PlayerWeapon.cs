@@ -70,7 +70,6 @@ public class PlayerWeapon : NetworkBehaviour
     public void ServerInitializeWeapon(int index)
     {
         _currentWeaponIndex.Value = index;
-        Debug.Log("Seting current index to " + index);
     }
 
     // Update index in local
@@ -82,7 +81,6 @@ public class PlayerWeapon : NetworkBehaviour
 
         // Activate new weapon
         weapons[newIndex].gameObject.SetActive(true);
-        Debug.Log("Activating weapon in slot " + newIndex);
         currentWeapon = weapons[newIndex];
     }
 
