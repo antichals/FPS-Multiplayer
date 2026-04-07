@@ -87,6 +87,9 @@ public class PlayerController : NetworkBehaviour
                 playerCanvas.SetActive(true);
             }
             */
+
+
+            UIManager._instance.InitializeHUD(this); // Example: pass player reference
         }
 
         
@@ -100,6 +103,9 @@ public class PlayerController : NetworkBehaviour
         HandleMovement();
         HandleLook();
 
+
+
+        // Show Scoreboard
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (firstAccessScoreboard)
@@ -110,7 +116,6 @@ public class PlayerController : NetworkBehaviour
 
             UIManager._instance.ToggleScoreboard(true);
         }
-
         if (Input.GetKeyUp(KeyCode.Tab))
         {
             UIManager._instance.ToggleScoreboard(false);

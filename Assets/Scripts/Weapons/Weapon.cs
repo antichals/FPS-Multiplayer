@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class Weapon : NetworkBehaviour
 {
     public int damage;
-    public float maxRange = 20f;
+    public float maxRange = 40;
     public float fireRate = 0.5f;
     private float _lastFireTime;
 

@@ -399,6 +399,7 @@ MonoBehaviour:
   playerCamera: {fileID: 0}
   weaponRoot: {fileID: 0}
   characterController: {fileID: 0}
+  firstAccessScoreboard: 1
   canMove: 1
   playerSelfLayer: 7
 --- !u!114 &2125758751652951245
@@ -560,7 +561,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 2125758751652951245}
   _networkObjectCache: {fileID: 0}
-  maxHealth: 100
+  _maxHealth: 100
 --- !u!136 &8963713701119577975
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1006,8 +1007,8 @@ MonoBehaviour:
   _componentIndexCache: 5
   _addedNetworkObject: {fileID: 2125758751652951245}
   _networkObjectCache: {fileID: 2125758751652951245}
-  damage: 10
-  maxRange: 20
+  damage: 15
+  maxRange: 40
   fireRate: 0.2
   weaponHitLayer:
     serializedVersion: 2
@@ -1236,8 +1237,8 @@ MonoBehaviour:
   _componentIndexCache: 6
   _addedNetworkObject: {fileID: 2125758751652951245}
   _networkObjectCache: {fileID: 2125758751652951245}
-  damage: 15
-  maxRange: 20
+  damage: 20
+  maxRange: 10
   fireRate: 1
   weaponHitLayer:
     serializedVersion: 2

@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
     public static UIManager _instance { get; private set; }
     [SerializeField] private TextMeshProUGUI _healthText;
     [SerializeField] private ScoreboardUI _scoreboard;
+    [SerializeField] private GameObject HUDCanvas;
     
 
     private void OnEnable()
@@ -33,6 +34,11 @@ public class UIManager : MonoBehaviour
         //DontDestroyOnLoad(gameObject); // Optional, if you want it across scenes
     }
 
+
+    public void InitializeHUD(PlayerController player)
+    {
+        HUDCanvas.SetActive(true);
+    }
 
     public void SubscribeToHealthChange(PlayerHealth playerHealth)
     {
